@@ -1,0 +1,56 @@
+body{
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    display: flex;
+    flex-direction: column;
+    background-color: black;
+    color: white;
+    min-height: 98vh;
+    justify-content: flex-end;
+}
+
+p#mainAction{
+    font-size: 48px;
+    margin: 0;
+}
+
+.content{
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+}
+
+.display{
+    text-align: right;
+}
+
+
+button {
+    height: 80px;
+    width: 80px;
+    background: #313131;
+    color: white;
+    font-size: 36px;
+    text-align: center;
+    border-radius: 50%;
+    border: 1px solid #000;
+    margin: 3px;
+}
+
+button.operators{
+    background: #fea00c;
+    font-size: 40px;
+}
+
+button.operators.x{
+    background: #a0a0a0;
+    color: black;
+    font-size: 32px;
+}
+
+button.operands.x{
+    text-align: left;
+    border-radius: 50px;
+    width: 172px;
+    padding-left: 30px;
+}
