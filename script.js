@@ -118,7 +118,22 @@ function processOperators(digit){
         mainAction.textContent = "0"
         document.getElementById("solid").style.border = "none";
     }
+    else if (digit == 'inv' && numb == ""){
+        if (numa.startsWith("-")){
+            numa = numa.slice(1)
+        } else{
+            numa = "-" + numa
+        }
+            console.log(numa)
+            mainAction.textContent = (numa)
+
+    }
     else{
+        if (numa == ""){
+            operate(0, numb, operator)
+        } else if (operator != "" && numb != ""){
+            operate(numa, numb, operator)
+        }
         operator = digit
         console.log(operator)
         
@@ -160,17 +175,23 @@ function operate(na,nb,op){
 
     }
 
-    numa = result.toString()
-    temp = numb
-    numb = ""
-    mainAction.textContent = (numa)
-
-    if (numa == "ERROR"){
+    if (result == "ERROR"){
+        mainAction.textContent = result
         numa = ""
+        numb = ""
         operator = ""
+        result = ""
     } else {
-        operator = ""
+        result = +result.toFixed(8) // Rounds decimals, but doesnt leave extra zeroes
+        numa = result.toString()
+        temp = numb
+        numb = ""
+        mainAction.textContent = (numa)
     }
+
+
+
+
 
 }
 
