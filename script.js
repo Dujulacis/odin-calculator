@@ -1,11 +1,12 @@
 let numa = ""
 let numb = ""
 let temp = ""
+let newcalc = false
 let operator = ""
 let result = ""
 
-let historyAction = document.getElementById("historyAction")
-let mainAction = document.getElementById("mainAction")
+let historyAction = document.getElementById("historyAction") // History display
+let mainAction = document.getElementById("mainAction") // Main display
 
 
 // Process keyboard input
@@ -71,23 +72,31 @@ operators.forEach((button) => {
 // Handle various cases of number inputs
 function processDigits(digit){ 
 
-    if (numa == "" && operator == ""){
+    if (numa == "" && operator == ""){ // First number, first digit entry
         numa = digit
         console.log(numa)
-        mainAction.textContent = (numa)
+        mainAction.textContent = numa
     }
-    else if (operator == ""){
+    else if (operator == ""){ // First number, next digit entry
         console.log(numa)
         numa += digit
         console.log(numa)
-        mainAction.textContent = (numa)
+        mainAction.textContent = numa
     }
-    else if (numb == ""){
+    else if (newcalc == true){ // Starts new number after a calculation is finished
+        temp = ""
+        operator = ""
+        numa = digit
+        console.log(numa)
+        historyAction.textContent = (mainAction.textContent)
+        mainAction.textContent = numa
+    }
+    else if (numb == ""){ // Second number, first digit entry
         numb = digit
         console.log(numb)
-        mainAction.textContent += (numb)
+        mainAction.textContent += numb
     }
-    else{
+    else{ // Second number, next digit entry
         numb += digit
         console.log(numb)
         mainAction.textContent = document.getElementById(operator).textContent + numb
@@ -105,10 +114,10 @@ function processOperators(digit){
         historyAction.textContent = `${numa} ${document.getElementById(operator).textContent} ${numb}`
         operate(numa, numb, operator)
     }
-    else if (digit == "pro"){
+    else if (digit == "pro"){ // Divide by 100, aka gives you percentage
         operate(numa, 100, "div")
     }
-    else if (digit == "clr"){
+    else if (digit == "clr"){ // Clear everything
         numa = ""
         numb = ""
         operator = ""
@@ -118,7 +127,7 @@ function processOperators(digit){
         mainAction.textContent = "0"
         document.getElementById("solid").style.border = "none";
     }
-    else if (digit == 'inv' && numb == ""){
+    else if (digit == 'inv' && numb == ""){ // Inverts the sign
         if (numa.startsWith("-")){
             numa = numa.slice(1)
         } else{
@@ -129,9 +138,9 @@ function processOperators(digit){
 
     }
     else{
-        if (numa == ""){
+        if (numa == ""){ // Allows not inputing the first number
             operate(0, numb, operator)
-        } else if (operator != "" && numb != ""){
+        } else if (operator != "" && numb != ""){ // Allows operation chaining
             operate(numa, numb, operator)
         }
         operator = digit
@@ -141,6 +150,8 @@ function processOperators(digit){
         historyAction.textContent = (mainAction.textContent)
         mainAction.textContent = ""
         mainAction.textContent += (document.getElementById(operator).textContent)
+
+        newcalc = false
     }
 }
 
@@ -175,7 +186,9 @@ function operate(na,nb,op){
 
     }
 
-    if (result == "ERROR"){
+    newcalc = true
+
+    if (result == "ERROR"){ // Handles division by zero
         mainAction.textContent = result
         numa = ""
         numb = ""
