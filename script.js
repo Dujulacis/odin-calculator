@@ -4,86 +4,161 @@ let temp = ""
 let operator = ""
 let result = ""
 
+let historyAction = document.getElementById("historyAction")
+let mainAction = document.getElementById("mainAction")
 
-const operands = document.querySelectorAll(".operands") // Handles different cases of number inputs
+
+// Process keyboard input
+document.addEventListener("keydown", (input) => { 
+    const key = input.key;
+
+    // Number / decimal input
+    if (!isNaN(key) || key == ".") { 
+        processDigits(key);
+    }
+
+    // Operator input
+    if (key == "+"){
+        processOperators("add");
+    } 
+    if (key == "-"){
+        processOperators("sub");
+    } 
+    if (key == "*"){
+        processOperators("mul");
+    } 
+    if (key == "/"){
+        processOperators("div");
+    } 
+    if (key == "%"){
+        processOperators("pro");
+    } 
+    if (key == "Enter" || key === "=") {
+        processOperators("eqv")
+    }
+    if (key == "Escape"){
+        processOperators("clr")
+    }
+    if (key === "Backspace") { // Remove digits one at a time, fallback to zero if empty
+        if (operator == "") {
+            numa = numa.slice(0, -1);
+            mainAction.textContent = numa || "0";
+        } else {
+            numb = numb.slice(0, -1);
+            mainAction.textContent = numb || "0"; 
+        }
+    }
+
+})
+
+
+// Event listeners for button clicks
+const operands = document.querySelectorAll(".operands") 
 operands.forEach((button) => {
     button.addEventListener("click", () => {
-        if (numa == "" && operator == ""){
-            numa = button.id
-            console.log(numa)
-            document.getElementById("mainAction").textContent = (numa)
-        }
-        else if (operator == ""){
-            console.log(numa)
-            numa += button.id
-            console.log(numa)
-            document.getElementById("mainAction").textContent = (numa)
-        }
-        else if (numb == ""){
-            numb = button.id
-            console.log(numb)
-            document.getElementById("mainAction").textContent = (numb)
-        }
-        else{
-            numb += button.id
-            console.log(numb)
-            document.getElementById("mainAction").textContent = (numb)
-        }
-        
-
+        processDigits(button.id)
     })
 })
 
-const operators = document.querySelectorAll(".operators") // Handles operations
+const operators = document.querySelectorAll(".operators") 
 operators.forEach((button) => {
     button.addEventListener("click", () => {
-        if (button.id == "eqv"){
-            if(numb == "" && temp != ""){ // Uses the previous second number (temp) to allow repeating previous operation
-            
-                numb = temp
-            }
-            operate(numa, numb, operator)
-        }
-        else if (button.id == "pro"){
-            operate(numa, 100, "pro")
-        }
-        else if (button.id == "clr"){
-            numa = ""
-            numb = ""
-            operator = ""
-            result = ""
-            temp = ""
-            document.getElementById("mainAction").textContent = (0)
-        }
-        else{
-            operator = button.id
-            console.log(operator)
-            document.getElementById("mainAction").textContent = (document.getElementById(operator).textContent)
-        }
-
+        processOperators(button.id)
     })
 })
 
+
+// Handle various cases of number inputs
+function processDigits(digit){ 
+
+    if (numa == "" && operator == ""){
+        numa = digit
+        console.log(numa)
+        mainAction.textContent = (numa)
+    }
+    else if (operator == ""){
+        console.log(numa)
+        numa += digit
+        console.log(numa)
+        mainAction.textContent = (numa)
+    }
+    else if (numa == ""){
+        numa = 0
+        numb = digit
+        console.log(numb)
+        mainAction.textContent = (numb)
+    }
+    else if (numb == ""){
+        numb = digit
+        console.log(numb)
+        mainAction.textContent = (numb)
+    }
+    else{
+        numb += digit
+        console.log(numb)
+        mainAction.textContent = (numb)
+    }
+        
+}
+
+// Handle different operator behavior
+function processOperators(digit){ 
+
+    if (digit == "eqv"){
+        if(numb == "" && temp != ""){ // Uses the previous second number (temp) to allow repeating previous operation
+            numb = temp
+        }
+        operate(numa, numb, operator)
+    }
+    else if (digit == "pro"){
+        operate(numa, 100, "div")
+    }
+    else if (digit == "clr"){
+        numa = ""
+        numb = ""
+        operator = ""
+        result = ""
+        historyAction.textContent = ""
+        temp = ""
+        mainAction.textContent = (0)
+    }
+    else{
+        operator = digit
+        console.log(operator)
+        
+        if (!historyAction.textContent.trim()){ // Check if there is content in the history
+            historyAction.textContent = (mainAction.textContent)
+        }
+        else{
+            historyAction.textContent += "" + (mainAction.textContent)
+        }
+        mainAction.textContent = (document.getElementById(operator).textContent)
+    }
+}
+
+
 function operate(na,nb,op){
+    na = parseFloat(na)
+    nb = parseFloat(nb)
     switch(op){
         case "add":
-            result = parseFloat(na) + parseFloat(nb)
+            result = na + nb
             console.log(result)
             break
         case "sub":
-            result = parseFloat(na) - parseFloat(nb)
+            result = na - nb
             console.log(result)
             break
         case "mul":
-            result = parseFloat(na) * parseFloat(nb)
+            result = na * nb
             console.log(result)
             break
         case "div":
-            result = parseFloat(na) / parseFloat(nb)
-            console.log(result)
-            break
-        case "pro":
-            result = parseFloat(na) / nb
+            if (nb == 0){
+                result = "ERROR"
+                break
+            }
+            result = na / nb
             console.log(result)
             break
         default:
@@ -92,14 +167,16 @@ function operate(na,nb,op){
 
     }
 
-
     if (result != 0){
         numa = result.toString()
     }
     temp = numb
     numb = ""
+    mainAction.textContent = (numa)
 
-    document.getElementById("mainAction").textContent = (numa)
+    if (numa == "ERROR"){
+        numa = ""
+    }
 
 }
 
