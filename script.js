@@ -82,21 +82,15 @@ function processDigits(digit){
         console.log(numa)
         mainAction.textContent = (numa)
     }
-    else if (numa == ""){
-        numa = 0
-        numb = digit
-        console.log(numb)
-        mainAction.textContent = (numb)
-    }
     else if (numb == ""){
         numb = digit
         console.log(numb)
-        mainAction.textContent = (numb)
+        mainAction.textContent += (numb)
     }
     else{
         numb += digit
         console.log(numb)
-        mainAction.textContent = (numb)
+        mainAction.textContent = document.getElementById(operator).textContent + numb
     }
         
 }
@@ -108,6 +102,7 @@ function processOperators(digit){
         if(numb == "" && temp != ""){ // Uses the previous second number (temp) to allow repeating previous operation
             numb = temp
         }
+        historyAction.textContent = `${numa} ${document.getElementById(operator).textContent} ${numb}`
         operate(numa, numb, operator)
     }
     else if (digit == "pro"){
@@ -117,26 +112,24 @@ function processOperators(digit){
         numa = ""
         numb = ""
         operator = ""
+        temp = ""
         result = ""
         historyAction.textContent = ""
-        temp = ""
-        mainAction.textContent = (0)
+        mainAction.textContent = "0"
+        document.getElementById("solid").style.border = "none";
     }
     else{
         operator = digit
         console.log(operator)
         
-        if (!historyAction.textContent.trim()){ // Check if there is content in the history
-            historyAction.textContent = (mainAction.textContent)
-        }
-        else{
-            historyAction.textContent += "" + (mainAction.textContent)
-        }
-        mainAction.textContent = (document.getElementById(operator).textContent)
+        document.getElementById("solid").style.borderTop = "1px solid #303030";
+        historyAction.textContent = (mainAction.textContent)
+        mainAction.textContent = ""
+        mainAction.textContent += (document.getElementById(operator).textContent)
     }
 }
 
-
+// Handle operations themselves
 function operate(na,nb,op){
     na = parseFloat(na)
     nb = parseFloat(nb)
@@ -167,15 +160,16 @@ function operate(na,nb,op){
 
     }
 
-    if (result != 0){
-        numa = result.toString()
-    }
+    numa = result.toString()
     temp = numb
     numb = ""
     mainAction.textContent = (numa)
 
     if (numa == "ERROR"){
         numa = ""
+        operator = ""
+    } else {
+        operator = ""
     }
 
 }
