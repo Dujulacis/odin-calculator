@@ -5,34 +5,35 @@ let newcalc = false
 let operator = ""
 let result = ""
 
-let historyAction = document.getElementById("historyAction") // History display
 let mainAction = document.getElementById("mainAction") // Main display
+let historyAction = document.getElementById("historyAction") // History display
+const display = mainAction.parentElement
 
 
 // Process keyboard input
 document.addEventListener("keydown", (input) => { 
     const key = input.key;
-
-    // Number / decimal input
-    if (!isNaN(key) || key == ".") { 
+    
+    // Number / decimal input - prevent any more input at the lowest font size before I fix wrapping
+    if ((!isNaN(key) || key == ".") && mainAction.style.fontSize != "20px") { 
         processDigits(key);
     }
 
     // Operator input
     if (key == "+"){
-        processOperators("add");
+        processOperators("add")
     } 
     if (key == "-"){
-        processOperators("sub");
+        processOperators("sub")
     } 
     if (key == "*"){
-        processOperators("mul");
+        processOperators("mul")
     } 
     if (key == "/"){
-        processOperators("div");
+        processOperators("div")
     } 
     if (key == "%"){
-        processOperators("pro");
+        processOperators("pro")
     } 
     if (key == "Enter" || key === "=") {
         processOperators("eqv")
@@ -42,13 +43,14 @@ document.addEventListener("keydown", (input) => {
     }
     if (key === "Backspace") { // Remove digits one at a time, fallback to zero if empty
         if (operator == "") {
-            numa = numa.slice(0, -1);
-            mainAction.textContent = numa || "0";
+            numa = numa.slice(0, -1)
+            mainAction.textContent = numa || "0"
         } else {
-            numb = numb.slice(0, -1);
-            mainAction.textContent = numb || "0"; 
+            numb = numb.slice(0, -1)
+            mainAction.textContent = numb || "0"
         }
     }
+    adjustFontSize()
 
 })
 
@@ -67,6 +69,27 @@ operators.forEach((button) => {
         processOperators(button.id)
     })
 })
+
+
+// Adjust font size dynamically for display elements
+function adjustFontSize() {
+    let primaryFontSize = 60
+    let secondaryFontSize = 30
+
+    mainAction.style.fontSize = primaryFontSize + "px"
+    historyAction.style.fontSize = secondaryFontSize + "px"
+
+    // Shrink main and history display elements as needed
+    while (mainAction.scrollWidth > display.clientWidth && primaryFontSize > 20) {
+        primaryFontSize--
+        mainAction.style.fontSize = primaryFontSize + "px"
+    }
+    
+    while (historyAction.scrollWidth > display.clientWidth && secondaryFontSize > 10) {
+        secondaryFontSize--
+        historyAction.style.fontSize = secondaryFontSize + "px"
+    }
+}
 
 
 // Handle various cases of number inputs
@@ -101,8 +124,9 @@ function processDigits(digit){
         console.log(numb)
         mainAction.textContent = document.getElementById(operator).textContent + numb
     }
-        
+    adjustFontSize()
 }
+
 
 // Handle different operator behavior
 function processOperators(digit){ 
@@ -125,16 +149,21 @@ function processOperators(digit){
         result = ""
         historyAction.textContent = ""
         mainAction.textContent = "0"
-        document.getElementById("solid").style.border = "none";
+        document.getElementById("solid").style.border = "none"
     }
-    else if (digit == 'inv' && numb == ""){ // Inverts the sign
-        if (numa.startsWith("-")){
-            numa = numa.slice(1)
-        } else{
-            numa = "-" + numa
+    else if (digit == "inv" && numb == ""){ // Inverts the sign
+        if (numa == 0 || numa == ""){
+            console.log('not allowed')
         }
+        else{
+            if (numa.startsWith("-")){
+            numa = numa.slice(1)
+            } else{
+            numa = "-" + numa
+            }
             console.log(numa)
             mainAction.textContent = (numa)
+        }
 
     }
     else{
@@ -146,14 +175,16 @@ function processOperators(digit){
         operator = digit
         console.log(operator)
         
-        document.getElementById("solid").style.borderTop = "1px solid #303030";
+        document.getElementById("solid").style.borderTop = "1px solid #303030"
         historyAction.textContent = (mainAction.textContent)
         mainAction.textContent = ""
         mainAction.textContent += (document.getElementById(operator).textContent)
 
         newcalc = false
     }
+    adjustFontSize()
 }
+
 
 // Handle operations themselves
 function operate(na,nb,op){
@@ -185,7 +216,7 @@ function operate(na,nb,op){
             break
 
     }
-
+    adjustFontSize()
     newcalc = true
 
     if (result == "ERROR"){ // Handles division by zero
@@ -201,10 +232,5 @@ function operate(na,nb,op){
         numb = ""
         mainAction.textContent = (numa)
     }
-
-
-
-
-
 }
 
